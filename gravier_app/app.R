@@ -39,9 +39,9 @@ ui <- fluidPage(
 )
 
 
-# Rely on the 'WorldPhones' dataset in the datasets
-# package (which generally comes preloaded).
-library(datasets)
+# Rely on the 'Gene expression data' in the datasets
+# Gravier data is loaded from the file.
+gravier_data <- 
 
 # Define a server for the Shiny app
 server <- function(input, output) {
