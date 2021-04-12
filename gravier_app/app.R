@@ -53,9 +53,13 @@ ui <- fluidPage(
 # Define a server for the Shiny app
 server <- function(input, output) {
     output$scatterplot <- renderPlot({
-        p = ggplot(data = read.csv("gravier_data.csv")) +
+        p = ggplot(data = gravier_data) +
             aes_string(x = input$"gene1", y = input$"gene2") +
-            geom_point()
+            geom_point()+
+            geom_smooth(method = lm)+
+            theme_minimal()+
+            theme(plot.title = element_text(size = 18))+
+            labs(title = "Gene expression correlation")
         plot(p)
     })
 }
