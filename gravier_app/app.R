@@ -16,6 +16,8 @@ library(datasets)
 library(tidyverse)
 
 gravier_data <- read_csv("gravier_data.csv")
+gravier_data <- gravier_data %>% 
+    select(-outcome)
 
 # Use a fluid Bootstrap layout
 ui <- fluidPage(    
@@ -28,15 +30,17 @@ ui <- fluidPage(
         
         # Define the sidebar with one input
         sidebarPanel(
-            selectInput("gene", "Gene:", 
-                        choices=colnames(str_detect("g"))),
+            selectInput("gene1", "Gene 1:", 
+                        choices=colnames(gravier_data)),
+            selectInput("gene2", "Gene 2:", 
+                        choices=colnames(gravier_data)),
             hr(),
             helpText("Data from Gravier database")
         ),
         
         # Create a spot for the barplot
         mainPanel(
-            plotOutput("phonePlot")  
+            plotOutput("scatterplot")  
         )
         
     )
@@ -48,17 +52,15 @@ ui <- fluidPage(
 
 # Define a server for the Shiny app
 server <- function(input, output) {
-    
-    # Fill in the spot we created for a plot
-    output$phonePlot <- renderPlot({
-        
-        # Render a barplot
-        barplot(WorldPhones[,input$gene]*1000, 
-                main=input$region,
-                ylab="Number of Telephones",
-                xlab="Year")
+    output$scatterplot <- renderPlot({
+        p = ggplot(data = read.csv("gravier_data.csv")) +
+            aes_string(x = input$"gene1", y = input$"gene2") +
+            geom_point()
+        plot(p)
     })
 }
+
+
 
 # Run the application 
 shinyApp(ui = ui, server = server)
