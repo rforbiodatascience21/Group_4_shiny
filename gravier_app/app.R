@@ -15,7 +15,11 @@ library(datasets)
 
 library(tidyverse)
 
-load(file = "gravier_app/data/gravier.RData")
+load(file = "/cloud/project/gravier_app/data/gravier.RData")
+gravier_data <- LoadToEnvironment <- function(RData, env=new.env()) {
+    load(RData, env)
+    return(env)
+}
 
 gravier_data <- mutate(as_tibble(pluck(gravier, "x")),
                        outcome = pluck(gravier, "y"))
@@ -26,10 +30,7 @@ gravier_data <- gravier_data %>%
 gravier_data <- gravier_data %>% 
     mutate(outcome = case_when(outcome == "good" ~ 0,
                                outcome == "poor" ~ 1))
-gravier_data_long <- gravier_data %>% 
-    pivot_longer(cols = contains("g"),
-                 names_to = "gene",
-                 values_to = "log2_expr_level")
+
 
 # Use a fluid Bootstrap layout
 ui <- fluidPage(    
@@ -43,7 +44,7 @@ ui <- fluidPage(
         # Define the sidebar with one input
         sidebarPanel(
             selectInput("gene", "Gene:", 
-                        choices=colnames(WorldPhones)),
+                        choices=colnames(gene)),
             hr(),
             helpText("Data from Gravier database")
         ),
@@ -59,7 +60,6 @@ ui <- fluidPage(
 
 # Rely on the 'Gene expression data' in the datasets
 # Gravier data is loaded from the file.
-gravier_data <- 
 
 # Define a server for the Shiny app
 server <- function(input, output) {
