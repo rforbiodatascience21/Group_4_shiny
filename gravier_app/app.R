@@ -15,22 +15,7 @@ library(datasets)
 
 library(tidyverse)
 
-load(file = "/cloud/project/gravier_app/data/gravier.RData")
-gravier_data <- LoadToEnvironment <- function(RData, env=new.env()) {
-    load(RData, env)
-    return(env)
-}
-
-gravier_data <- mutate(as_tibble(pluck(gravier, "x")),
-                       outcome = pluck(gravier, "y"))
-
-gravier_data <- gravier_data %>% 
-    select(outcome, everything())
-
-gravier_data <- gravier_data %>% 
-    mutate(outcome = case_when(outcome == "good" ~ 0,
-                               outcome == "poor" ~ 1))
-
+gravier_data <- read_csv("gravier_data.csv")
 
 # Use a fluid Bootstrap layout
 ui <- fluidPage(    
@@ -44,7 +29,7 @@ ui <- fluidPage(
         # Define the sidebar with one input
         sidebarPanel(
             selectInput("gene", "Gene:", 
-                        choices=colnames(gene)),
+                        choices=colnames(str_detect("g"))),
             hr(),
             helpText("Data from Gravier database")
         ),
@@ -68,7 +53,7 @@ server <- function(input, output) {
     output$phonePlot <- renderPlot({
         
         # Render a barplot
-        barplot(WorldPhones[,input$region]*1000, 
+        barplot(WorldPhones[,input$gene]*1000, 
                 main=input$region,
                 ylab="Number of Telephones",
                 xlab="Year")
