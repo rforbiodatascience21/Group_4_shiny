@@ -9,39 +9,51 @@
 
 library(shiny)
 
-# Define UI for application that draws a histogram
-ui <- fluidPage(
+# Rely on the 'WorldPhones' dataset in the datasets
+# package (which generally comes preloaded).
+library(datasets)
 
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
+# Use a fluid Bootstrap layout
+ui <- fluidPage(    
+    
+    # Give the page a title
+    titlePanel("Gene expression analysis"),
+    
+    # Generate a row with a sidebar
+    sidebarLayout(      
+        
+        # Define the sidebar with one input
         sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
+            selectInput("gene", "Gene:", 
+                        choices=colnames(WorldPhones)),
+            hr(),
+            helpText("Data from Gravier database")
         ),
-
-        # Show a plot of the generated distribution
+        
+        # Create a spot for the barplot
         mainPanel(
-           plotOutput("distPlot")
+            plotOutput("phonePlot")  
         )
+        
     )
 )
 
-# Define server logic required to draw a histogram
+
+# Rely on the 'WorldPhones' dataset in the datasets
+# package (which generally comes preloaded).
+library(datasets)
+
+# Define a server for the Shiny app
 server <- function(input, output) {
-
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+    
+    # Fill in the spot we created for a plot
+    output$phonePlot <- renderPlot({
+        
+        # Render a barplot
+        barplot(WorldPhones[,input$region]*1000, 
+                main=input$region,
+                ylab="Number of Telephones",
+                xlab="Year")
     })
 }
 
