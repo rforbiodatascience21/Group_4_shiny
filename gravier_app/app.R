@@ -13,6 +13,24 @@ library(shiny)
 # package (which generally comes preloaded).
 library(datasets)
 
+library(tidyverse)
+
+load(file = "gravier_app/data/gravier.RData")
+
+gravier_data <- mutate(as_tibble(pluck(gravier, "x")),
+                       outcome = pluck(gravier, "y"))
+
+gravier_data <- gravier_data %>% 
+    select(outcome, everything())
+
+gravier_data <- gravier_data %>% 
+    mutate(outcome = case_when(outcome == "good" ~ 0,
+                               outcome == "poor" ~ 1))
+gravier_data_long <- gravier_data %>% 
+    pivot_longer(cols = contains("g"),
+                 names_to = "gene",
+                 values_to = "log2_expr_level")
+
 # Use a fluid Bootstrap layout
 ui <- fluidPage(    
     
